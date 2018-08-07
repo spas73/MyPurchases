@@ -1,0 +1,112 @@
+CLASSIFICAZIONE MODIFICHE PER COMMIT
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Ecco quali dovrebbero essere le convenzioni per fare i commit sul nostro GIT
+
+1) Per i normali progetti (es. DAISY):
+
+	RELEASE - <EXENAME / SUBMODULE> (versione) - <LIB_VERSION>
+	BETA - <EXENAME / SUBMODULE> (versione) - <LIB_VERSION>
+	CHANGE - <EXENAME / SUBMODULE> 				
+	FIX - <EXENAME / SUBMODULE>				
+	TEMP - <EXENAME / SUBMODULE>      // Modifica temporanea committata per necessita, da riprendere con AMEND 
+	DEAD - <EXENAME / SUBMODULE>      // Da usare come segnaposto per moduli o parti di codice importante rimosse
+	
+2) Per la libreria:
+	RELEASE <LIB_VERSION>
+	CHANGE 
+	FIX 
+	TEMP
+	DEPRECATED 
+	DEAD
+
+3) Inoltre esiste anche:
+ 
+	MERGE (UTENTE -> UTENTE)          // con l'ovvio significato.
+   
+    	CHANGE - Ambiente                 // per committare modifiche a file descrittivi o relativi all'ambiente git
+	(es. questo file testo)
+
+4) Dopo queste, dovrebbe sempre seguire spazio-trattino-spazio e la modifica (principale) o un riassunto della modifica effettuata.
+5) Eventualmente su righe successive inserire una lista dettagliata delle modifiche qualora fossero numerose o specifiche.
+6) Firmare le modifiche con apposito bottone
+7) Per DEPRECATED, CLEAR, RELEASE e BETA fare un commit specifico che non includa altre modifiche
+8) Nei CHANGE non ci dovrebbe mai essere una modifica di versione dell'applicativo, che è invece riservata a BETA o RELEASE
+9) RELEASE è riservato a versioni ufficiali che richiedono anche la produzione di un Setup. In questo momento le dovremmo poter fare solo io (e PDP per Forest e Fire)
+10) BETA è da usare sempre quando si manda un EXE a qualcuno come soluzione temporanea o in attesa di feedback.
+
+		 
+---------------------------------------------------------------------
+
+COMANDI GIT
+^^^^^^^^^^^
+
+Cancellare Tag in Remoto
+------------------------
+git tag -d <TAG_NAME>
+git push origin :refs/tags/<TEG_NAME>
+
+
+
+Sistema di sincronizzazione con file bundle in locale
+-----------------------------------------------------
+lato developer :
+	git bundle create <A>.bundle --all --since=<X>.days HEAD
+
+lato repository:
+	git remote add <A> ../Bundles/<A>.bundle
+(solo la prima volta)
+
+	git fetch <A>
+	git checkout <A>/master
+
+alternativo a fetch
+	git pull <FILE>
+
+Sequenza per creare un nuovo developer
+----------------------------------------------------------
+SUL SERVER LINUX:
+1) Sul server linux creare il nuovo utente <A> con password	<A>-git2011
+2) Assegnargli il gruppo "git"
+3) Dopo aver provato l'account (verificare creazione nella cartella "home"), copiare
+   da /opt/git/BlessedSources.git come <A>Sources.git
+4) cambiare il proprietario (sudo chown -R <A>:git ./<A>Sources.git
+5) Sistemare i permessi sui file (e sottocartelle) in modo da dare RWX sul proprietario e solo RX al gruppo e altri
+
+SUL PC DEL DEVELOPER
+6) Creare: "Users\PROGRAMMAZIONE\Ambiente_DXE_NSN\Sources
+7) Installare git (opzione CRLF di deafault, window per checkout unix sul server)
+8) installere tortoisegit e configura 2 remoti:
+   origin, con accesso: <A>@10.156.152.130:/opt/git/BlessedSources.git
+   <A>, con accesso:	<A>@10.156.152.130:/opt/git/<A>Sources.git
+9) Da menu contestuare selezionare Create git repository here   
+10) Provare da computer client a fare fetchil nuovo "remote" accedendo come:
+   <A>@10.156.152.130:/opt/git/<A>Sources.git
+	
+Sequenza per ri-clonare un GIT su server per un developer:
+----------------------------------------------------------
+
+dopo aver aperto una bash con il comando contestuale, eseguire:
+	cd ..
+	git clone --bare Sources BlessedSources.git
+
+cancellare il file git dal server con:
+	ssh <A>@10.156.152.130: 'rm -r /opt/git/<A>Sources.git'
+
+copiare in remoto il nuovo git	
+	scp -r BlessedSources.git <A>@10.156.152.130:/opt/git/<A>Sources.git
+
+	
+Per scambiare via e-mail bundle
+-------------------------------	
+
+Per creare bunde:
+
+	git bundle create <A>.bundle --all --since=<X>.days HEAD
+
+lato mio, eseguirò:
+	git fetch ../<A>.bundle master:<A>/master
+
+per rispedire origin aggiornato:
+	git bundle create ../origin.bundle --all --since=<X>.days HEAD
+	

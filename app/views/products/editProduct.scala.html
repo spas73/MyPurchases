@@ -1,0 +1,26 @@
+@(productForm: Form[Product], ean: Option[Long] = None)(implicit flash: Flash, messages: Messages)
+
+@import views.html.helper._
+
+@main(Messages("products.form")) {
+  <h2>@Messages("products.form")</h2>
+
+  @form(ean.map(routes.Products.update(_)).getOrElse(routes.Products.save())) {
+
+      <fieldset>
+        @inputText(productForm("ean"), '_label -> "ean", '_help -> "")
+        @inputText(productForm("name"), '_label -> "name", '_help -> "")
+        @textarea(productForm("description"), '_label -> "description", '_help -> "", 'maxlength -> 255, 'rows -> 3, 'cols -> 50)
+      </fieldset>
+      <p>Dates are in yyyy-MM-dd format</p>
+
+      <div class="actions">
+        <p><input type="submit" class="btn primary" value='@ean.map(_=> Messages("products.edit.submit")).getOrElse(Messages("products.new.submit"))'></p>
+      </div>
+
+  }
+
+
+
+
+}
