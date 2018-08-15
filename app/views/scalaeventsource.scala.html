@@ -1,0 +1,30 @@
+@()(implicit flash: Flash, messages: Messages)
+@import java.util.Date
+@import play.api.Play.current
+
+<!--<script type="text/javascript">-->
+    <!--if (!!window.EventSource) {-->
+         <!--var stringSource = new EventSource("@routes.ScalaEventSourceController.streamClock()");-->
+         <!--stringSource.addEventListener('message', function(e) {-->
+             <!--$('#system-time').text(e.data)-->
+         <!--});-->
+       <!--} else {-->
+        <!--$('#system-time').text("Sorry. This browser doesn't seem to support Server sent event. Check <a href='http://html5test.com/compare/feature/communication-eventSource.html'>html5test</a> for browser compatibility.");-->
+       <!--}-->
+
+  <!--</script>-->
+<!--<h1>System time: <span id="system-time"></span></h1>-->
+
+
+<script type="text/javascript">
+    if (!!window.EventSource) {
+         var stringSource = new EventSource("@routes.ScalaEventSourceController.streamAlertNewProducts()");
+         stringSource.addEventListener('message', function(e) {
+             $('#system-alertNewProducts').text(e.data)
+         });
+       } else {
+        $('#system-alertNewProducts').text("Sorry. This browser doesn't seem to support Server sent event. Check <a href='http://html5test.com/compare/feature/communication-eventSource.html'>html5test</a> for browser compatibility.");
+       }
+
+  </script>
+<h1>System alert: <span id="system-alertNewProducts"></span></h1>

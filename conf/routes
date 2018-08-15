@@ -10,5 +10,17 @@ GET     /products/:ean/edit         controllers.Products.edit(ean: Long)
 
 GET     /barcode/:ean               controllers.Barcodes.barcode(ean: Long)
 
+GET     /eventSource                controllers.ScalaEventSourceController.index()
+GET     /eventSource/liveClock      controllers.ScalaEventSourceController.streamClock()
+GET     /eventSource/liveAlert      controllers.ScalaEventSourceController.streamAlertNewProducts()
+
+
+GET     /sendPickLists              controllers.PickLists.index
+GET     /preview                    controllers.PickLists.preview(warehouse: String)
+POST    /sendAsync                  controllers.PickLists.sendAsync(warehouse: String)
+
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+
