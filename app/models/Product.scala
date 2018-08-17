@@ -3,6 +3,11 @@ package models
 import java.text.SimpleDateFormat
 import java.util.Date
 
+import javax.inject.{Inject, Singleton}
+import play.api.libs.json._
+
+import scala.concurrent.{ExecutionContext, Future}
+
 /**
  * An entry in the product catalogue.
  *
@@ -10,7 +15,7 @@ import java.util.Date
  * @param name Product name
  * @param description Product description
  */
-case class Product(ean: Long, name: String, description: String) {
+case class Product(ean: Long, name: String, description: String, quantity: Long) {
   override def toString = "%s - %s".format(ean, name)
 }
 
@@ -20,12 +25,31 @@ case class Product(ean: Long, name: String, description: String) {
 object Product {
   
   var products = Set(
-    Product(5010255079763L, "Paperclips Large", "Large Plain Pack of 1000"),
-    Product(5018206244666L, "Giant Paperclips", "Giant Plain 51mm 100 pack"),
-    Product(5018306332812L, "Paperclip Giant Plain", "Giant Plain Pack of 10000"),
-    Product(5018306312913L, "No Tear Paper Clip", "No Tear Extra Large Pack of 1000"),
-    Product(5018206244611L, "Zebra Paperclips", "Zebra Length 28mm Assorted 150 Pack")
+    Product(5010255079763L, "Paperclips Large", "Large Plain Pack of 1000", 34),
+    Product(5018206244666L, "Giant Paperclips", "Giant Plain 51mm 100 pack", 17),
+    Product(5018306332812L, "Paperclip Giant Plain", "Giant Plain Pack of 10000", 67),
+    Product(5018306312913L, "No Tear Paper Clip", "No Tear Extra Large Pack of 1000", 23),
+    Product(5018206244611L, "Zebra Paperclips", "Zebra Length 28mm Assorted 150 Pack", 19)
   )
+
+  implicit object ProductFormat extends Format[Product] {
+    // convert from Product object to JSON (serializing to JSON)
+    def writes(product: Product): JsValue = {
+      val productSeq = Seq(
+        "name" -> JsString(product.name),
+        "value" -> JsNumber(product.quantity)
+      )
+      JsObject(productSeq)
+    }
+    // convert from JSON string to a Fruit object (de-serializing from JSON)
+    def reads(json: JsValue): JsResult[Product] = {
+      JsSuccess(Product((json \ "ean").as[Long], (json \ "name").as[String], (json \ "description").as[String], (json \ "value").as[Long]))
+    }
+  }
+
+  def tupled = (this.apply _).tupled
+
+
 
   /**
    * Products sorted by EAN code.
@@ -78,7 +102,7 @@ case class Preparation(orderNumber: Long, product: Product,
 object PickList {
 
   def find(warehouse: String) : List[Preparation] = {
-    val p = Product(5010255079763L, "Large paper clips 1000 pack","")
+    val p = Product(5010255079763L, "Large paper clips 1000 pack","", 9000)
     List(
       Preparation(3141592, p, 200, "Aisle 42 bin 7"),
       Preparation(6535897, p, 500, "Aisle 42 bin 7"),
@@ -103,4 +127,13 @@ object Order {
     Thread.sleep(5000L)
     new SimpleDateFormat("mmss").format(new Date())
   }
+}
+
+@Singleton
+class Products @Inject()(implicit ec: ExecutionContext) {
+
+  def getProducts: Future[Seq[Product]] = {
+    return  Future(Product.products.toSeq)
+  }
+
 }

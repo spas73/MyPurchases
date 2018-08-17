@@ -50,7 +50,8 @@ class Products @Inject()(c: ControllerComponents, messagesApi: MessagesApi, conf
           .verifying("validation.ean.checksum", eanCheck _)
           .verifying(error, constraint),
         "name" -> nonEmptyText,
-        "description" -> nonEmptyText
+        "description" -> nonEmptyText,
+        "quantity" -> longNumber
       )(Product.apply)(Product.unapply)
     )
 

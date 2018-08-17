@@ -19,6 +19,8 @@ GET     /sendPickLists              controllers.PickLists.index
 GET     /preview                    controllers.PickLists.preview(warehouse: String)
 POST    /sendAsync                  controllers.PickLists.sendAsync(warehouse: String)
 
+GET     /chart                      controllers.ChartController.index
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

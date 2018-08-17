@@ -45,7 +45,7 @@ class SchedulerActor @Inject()()(implicit ec: ExecutionContext) extends Actor {
         if (isAllDigits(barcode)) {
           val product: Option[Product] = Product.findByEan(barcode.toLong)
           if (!product.isDefined) {
-            Product.add(Product(barcode.toLong, "unknown name", "unknown description"))
+            Product.add(Product(barcode.toLong, "unknown name", "unknown description", 0))
             Product.newProductsCounter += 1
           }
 
